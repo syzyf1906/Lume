@@ -9,8 +9,16 @@ fs.mkdirSync(destDir, { recursive: true })
 fs.copyFileSync(src, dest)
 console.log(`Copied preload.js -> ${dest}`)
 
-// also copy package.json into dist so electron-builder can find app package
-const pkgSrc = path.resolve(__dirname, '..', 'package.json')
+// create a minimal package.json in dist so electron-builder can find app package
+const pkgPath = path.resolve(__dirname, '..', 'package.json')
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+const minimal = {
+	name: pkg.name || 'lume',
+	version: pkg.version || '0.1.0',
+	main: pkg.main || 'main/main.js',
+	description: pkg.description || '',
+	author: pkg.author || ''
+}
 const pkgDest = path.resolve(__dirname, '..', 'dist', 'package.json')
-fs.copyFileSync(pkgSrc, pkgDest)
-console.log(`Copied package.json -> ${pkgDest}`)
+fs.writeFileSync(pkgDest, JSON.stringify(minimal, null, 2))
+console.log(`Wrote minimal package.json -> ${pkgDest}`)
