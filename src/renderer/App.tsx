@@ -43,7 +43,27 @@ export default function App() {
               ))}
             </div>
           ) : (
-            <div className="text-white/50 text-center mt-20">Tu pojawi się lista plików (w budowie...)</div>
+            <div className="flex flex-col gap-2 w-full max-w-2xl">
+              {[
+                { name: 'Documents', size: '2.4 GB', type: 'Folder' },
+                { name: 'Photos', size: '1.8 GB', type: 'Folder' },
+                { name: 'project_lume.zip', size: '450 MB', type: 'Archive' }
+              ].map((file) => (
+                <div
+                  key={file.name}
+                  className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-300">📄</div>
+                    <div>
+                      <h4 className="text-white font-medium">{file.name}</h4>
+                      <p className="text-white/30 text-xs">{file.type}</p>
+                    </div>
+                  </div>
+                  <span className="text-white/50 text-sm">{file.size}</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </main>
