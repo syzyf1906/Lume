@@ -1,6 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
+import os from 'os'
 import si from 'systeminformation'
+import { installModFromZip, defaultTargetFolder, listLocalModBackups } from './fileManager'
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -23,12 +25,23 @@ ipcMain.handle('get-stats', async () => {
   try {
     const cpu = await si.currentLoad()
     const mem = await si.mem()
+    const disk = await si.fsSize()
     return {
       cpu: Math.round(cpu.currentLoad) + '%',
-      ram: (mem.active / 1024 / 1024 / 1024).toFixed(1) + ' GB'
+      ram: (mem.active / 1024 / 1024 / 1024).toFixed(1) + ' GB',
+      disk: disk[0] ? `${Math.round(disk[0].use)}%` : '—'
     }
   } catch (e) {
-    return { cpu: '—', ram: '—' }
+    return { cpu: '—', ram: '—', disk: '—' }
+  }
+})
+
+ipcMain.handle('mods:list-backups', async () => {
+  try {
+    const backups = await listLocalModBackups()
+    return { success: true, backups }
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) }
   }
 })
 
@@ -42,6 +55,16 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
+})
+
+// IPC handler to install a mod zip via fileManager
+ipcMain.handle('mods:install', async (_, url: string, targetFolder?: string) => {
+  try {
+    const result = await installModFromZip(url, targetFolder || defaultTargetFolder)
+    return { success: true, result }
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) }
+  }
 })
 
 // Example IPC handler (safe via preload)
