@@ -2,10 +2,10 @@ import React from 'react'
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#060608] font-sans text-white flex items-center justify-center">
-      <div className="w-[900px] max-w-[95%] p-12 rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] backdrop-blur-[20px] shadow-lg text-center">
-        <h1 className="text-4xl font-semibold mb-4">LUME IS ALIVE</h1>
-        <p className="text-sm text-gray-300">Ultra-clean Electron + React + Vite + Tailwind template.</p>
+    <div className="flex h-screen w-screen items-center justify-center bg-slate-950">
+      <div className="flex flex-col items-center gap-4 p-12 rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.3)]">
+        <h1 className="text-5xl font-black tracking-tighter text-white">LUME</h1>
+        <p className="text-white/60 font-medium tracking-wide">System ready</p>
       </div>
     </div>
   )
