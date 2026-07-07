@@ -29,10 +29,11 @@ ipcMain.handle('get-stats', async () => {
     return {
       cpu: Math.round(cpu.currentLoad) + '%',
       ram: (mem.active / 1024 / 1024 / 1024).toFixed(1) + ' GB',
-      disk: disk[0] ? `${Math.round(disk[0].use)}%` : '—'
+      disk: disk[0] ? `${Math.round(disk[0].use)}%` : '—',
+      platform: os.platform()
     }
   } catch (e) {
-    return { cpu: '—', ram: '—', disk: '—' }
+    return { cpu: '—', ram: '—', disk: '—', platform: os.platform() }
   }
 })
 
