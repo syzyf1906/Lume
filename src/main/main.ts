@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
+import si from 'systeminformation'
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -14,15 +15,22 @@ function createWindow() {
     }
   })
 
-  const isDev = process.env.NODE_ENV !== 'production'
-  if (isDev) {
-    win.loadURL('http://localhost:5173')
-    win.webContents.openDevTools()
-  } else {
-    const indexPath = path.join(app.getAppPath(), 'dist', 'renderer', 'index.html')
-    win.loadFile(indexPath)
-  }
+  win.loadFile(path.join(__dirname, '../renderer/index.html'))
 }
+
+// IPC handler to expose system stats to renderer
+ipcMain.handle('get-stats', async () => {
+  try {
+    const cpu = await si.currentLoad()
+    const mem = await si.mem()
+    return {
+      cpu: Math.round(cpu.currentLoad) + '%',
+      ram: (mem.active / 1024 / 1024 / 1024).toFixed(1) + ' GB'
+    }
+  } catch (e) {
+    return { cpu: '—', ram: '—' }
+  }
+})
 
 app.whenReady().then(() => {
   createWindow()
