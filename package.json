@@ -33,19 +33,11 @@
   },
   "build": {
     "appId": "com.lume.app",
-    "productName": "Lume",
-    "publish": "never",
-    "files": [
-      "dist/**",
-      "package.json"
-    ],
-    "directories": {
-      "buildResources": "build",
-      "output": "dist_installer"
-    },
     "win": {
-      "target": ["nsis"],
-      "icon": "build/icon.ico"
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true
     }
   }
 }
