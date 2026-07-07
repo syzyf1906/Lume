@@ -1,31 +1,43 @@
 import { useState, useEffect } from 'react'
-import { Cpu, Database, HardDrive } from 'lucide-react'
 import { initAuth } from './services/firebase'
 import fetchMods from './services/modsService'
 import fetchShaders from './services/shadersService'
 import SystemStats from './components/SystemStats'
+import TopOfWeekWidget from './components/TopOfWeekWidget'
+import { UpdatesWidget } from './components/UpdatesWidget'
 import ShaderModal from './components/ShaderModal'
 import Toast from './components/Toast'
 
 export default function App() {
   const [view, setView] = useState('Dashboard')
-  const [stats, setStats] = useState<{ cpu: string; ram: string; disk: string; platform: string }>({ cpu: '—', ram: '—', disk: '—', platform: 'unknown' })
+  const [stats, setStats] = useState<{ cpu: string; ram: string; disk: string; platform: string }>({ cpu: 'System Ready', ram: 'System Ready', disk: 'System Ready', platform: 'unknown' })
   const [topMods, setTopMods] = useState<any[]>([])
   const [shaders, setShaders] = useState<any[]>([])
   const [selectedShader, setSelectedShader] = useState<any>(null)
   const [toast, setToast] = useState<{ message: string; actionLabel?: string; onAction?: () => void } | null>(null)
   const [localBackups, setLocalBackups] = useState<any[]>([])
   const [downloadLoading, setDownloadLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     let mounted = true
 
+    const handleStatsUpdate = (payload: any) => {
+      if (!mounted || !payload) return
+      setRefreshing(true)
+      setStats(payload)
+      setTimeout(() => setRefreshing(false), 500)
+    }
+
     const fetchStats = async () => {
+      if (!(window as any).electron?.invoke) return
       try {
         const res = await (window as any).electron.invoke('get-stats')
-        if (mounted && res) setStats(res)
+        if (mounted && res) {
+          setStats(res)
+        }
       } catch (e) {
-        // ignore
+        if (mounted) setStats({ cpu: 'System Ready', ram: 'System Ready', disk: 'System Ready', platform: 'unknown' })
       }
     }
 
@@ -33,7 +45,7 @@ export default function App() {
       try {
         const mods = await fetchMods()
         if (mounted) {
-          const sorted = mods.sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
+          const sorted = mods.sort((a: any, b: any) => (b.downloads || b.popularity || 0) - (a.downloads || a.popularity || 0))
           setTopMods(sorted.slice(0, 3))
         }
       } catch (e) {
@@ -53,16 +65,22 @@ export default function App() {
       } catch (e) {
         // ignore
       }
+
     }
 
     fetchStats()
     fetchData()
-    const id = setInterval(fetchStats, 2000)
+
+    let removeListener: (() => void) | null = null
+    if ((window as any).electron?.on) {
+      removeListener = (window as any).electron.on('stats-update', handleStatsUpdate)
+    }
+
     initAuth()
 
     return () => {
       mounted = false
-      clearInterval(id)
+      if (typeof removeListener === 'function') removeListener()
     }
   }, [])
 
@@ -88,12 +106,6 @@ export default function App() {
       setToast({ message: `Błąd pobierania: ${result.error}` })
     }
   }
-
-  const topOfWeekCards = topMods.length > 0 ? topMods : [
-    { id: 'demo-1', name: 'Neon FX', description: 'Dynamiczny shader z neonowymi efektami.' },
-    { id: 'demo-2', name: 'Vapor Rims', description: 'Stylowe odblaski i chromowane powierzchnie.' },
-    { id: 'demo-3', name: 'Dark Pulse', description: 'Świetliste panele w trybie nocnym.' }
-  ]
 
   return (
     <div className="relative flex h-screen w-screen bg-[#050505] text-white overflow-hidden animate-in fade-in zoom-in duration-700">
@@ -131,26 +143,15 @@ export default function App() {
                 </div>
               </div>
 
-              <SystemStats stats={stats} />
-
-              <div className="mt-10">
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div>
-                    <h2 className="text-white text-xl font-semibold">Top of the Week</h2>
-                    <p className="text-white/40 text-sm">Najlepsze mody z Firebase w tym tygodniu.</p>
-                  </div>
+              <div className="dashboard-grid">
+                <div className="dashboard-grid__stats space-y-6">
+                  <SystemStats stats={stats} refreshing={refreshing} />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  {topOfWeekCards.map((mod) => (
-                    <div key={mod.id} className="rounded-3xl border border-white/[0.08] bg-[#0e0e14] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.2)] transition hover:border-white/20">
-                      <div className="mb-4 flex items-center justify-between gap-3">
-                        <span className="text-xs uppercase tracking-[0.3em] text-white/40">Top</span>
-                        <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs text-blue-200">#{topOfWeekCards.indexOf(mod) + 1}</span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-white">{mod.name || mod.title}</h3>
-                      <p className="text-white/40 mt-3 text-sm leading-6">{mod.description || 'Stylowy mod z kolekcji premium.'}</p>
-                    </div>
-                  ))}
+                <div className="dashboard-grid__top self-start h-full rounded-[28px] border border-white/[0.08] bg-[#0f0f0f] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                  <TopOfWeekWidget mods={topMods} />
+                </div>
+                <div className="dashboard-grid__activity rounded-[28px] border border-white/[0.08] bg-[#0f0f0f] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                  <UpdatesWidget />
                 </div>
               </div>
             </>

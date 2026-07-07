@@ -18,6 +18,7 @@ function createWindow() {
   })
 
   win.loadFile(path.join(__dirname, '../renderer/index.html'))
+  return win
 }
 
 // IPC handler to expose system stats to renderer
@@ -47,10 +48,38 @@ ipcMain.handle('mods:list-backups', async () => {
 })
 
 app.whenReady().then(() => {
-  createWindow()
+  const win = createWindow()
+
+  const sendStats = async () => {
+    try {
+      const cpu = await si.currentLoad()
+      const mem = await si.mem()
+      const disk = await si.fsSize()
+      win.webContents.send('stats-update', {
+        cpu: Math.round(cpu.currentLoad) + '%',
+        ram: (mem.active / 1024 / 1024 / 1024).toFixed(1) + ' GB',
+        disk: disk[0] ? `${Math.round(disk[0].use)}%` : '—',
+        platform: os.platform()
+      })
+    } catch (e) {
+      win.webContents.send('stats-update', {
+        cpu: 'System Ready',
+        ram: 'System Ready',
+        disk: 'System Ready',
+        platform: os.platform()
+      })
+    }
+  }
+
+  sendStats()
+  const intervalId = setInterval(sendStats, 2000)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+
+  app.on('before-quit', () => {
+    clearInterval(intervalId)
   })
 })
 
