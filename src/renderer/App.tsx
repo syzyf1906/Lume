@@ -20,10 +20,24 @@ export default function App() {
       </aside>
       <main className="w-4/5 h-screen p-6">
         <div className="m-6 p-10 rounded-[32px] border border-white/5 bg-gradient-to-br from-white/5 to-transparent shadow-[0_0_80px_rgba(0,0,0,0.5)] h-full backdrop-blur-2xl">
-          <h1 className="text-5xl font-black tracking-tighter">Midnight Glass</h1>
-          <p className="mt-4 text-white/70 max-w-2xl">
-            A premium glassmorphism dashboard with depth, softness, and refined color tones.
-          </p>
+          <div className="grid grid-cols-3 gap-6">
+            {[
+              { title: 'CPU Usage', val: '12%', color: 'from-blue-500' },
+              { title: 'Memory', val: '4.2 GB', color: 'from-purple-500' },
+              { title: 'Disk', val: '89%', color: 'from-cyan-500' }
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all cursor-pointer group"
+              >
+                <h3 className="text-white/40 text-sm font-semibold">{card.title}</h3>
+                <p className="text-3xl font-bold mt-2">{card.val}</p>
+                <div className="h-1 w-full bg-white/10 mt-4 rounded-full overflow-hidden">
+                  <div className={`h-full bg-gradient-to-r ${card.color} to-transparent w-1/2`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     </div>
