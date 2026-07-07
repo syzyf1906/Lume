@@ -38,6 +38,10 @@
     },
     "nsis": {
       "oneClick": true
+    },
+    "directories": {
+      "app": "dist",
+      "output": "dist_installer"
     }
   }
 }
