@@ -3,3 +3,6 @@ dist/
 .env
 /.cache
 /.vscode
+dist_installer/
+*.exe
+*.zip
