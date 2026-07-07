@@ -50,6 +50,7 @@ export default function App() {
       <main className="w-4/5 h-screen p-6">
         <div className="m-6 p-10 rounded-[32px] border border-white/5 bg-[#0f0f0f] shadow-[0_10px_30px_rgba(0,0,0,0.5)] h-full backdrop-blur-2xl glow-effect">
           {view === 'Dashboard' ? (
+            <>
             <div className="grid grid-cols-3 gap-6">
               {[
                 { title: 'CPU Usage', val: stats.cpu, color: 'from-blue-500', Icon: Cpu },
@@ -97,6 +98,7 @@ export default function App() {
                 ))}
               </div>
             </div>
+            </>
           ) : (
             <div className="flex flex-col gap-2 w-full max-w-2xl">
               {[
