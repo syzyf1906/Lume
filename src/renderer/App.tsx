@@ -69,7 +69,7 @@ export default function App() {
                   {/* Demo filler for CPU and Memory */}
                   {card.title === 'CPU Usage' || card.title === 'Memory' ? (
                     <div className="flex items-end gap-2 mt-2">
-                      <span className="text-3xl font-bold text-white">{card.val}</span>
+                      <span className="text-3xl font-bold text-white">{card.title === 'CPU Usage' ? (stats.cpu !== '—' ? stats.cpu : '14%') : (stats.ram !== '—' ? stats.ram : '4.2 GB')}</span>
                       <span className="text-blue-500 text-xs font-medium mb-1">OPTIMAL</span>
                     </div>
                   ) : (
@@ -84,6 +84,18 @@ export default function App() {
                   )}
                 </div>
               ))}
+            </div>
+
+            <div className="mt-10">
+              <h2 className="text-white/20 text-xs font-bold tracking-widest uppercase mb-4">Quick Actions</h2>
+              <div className="flex gap-4">
+                {['Clear Cache', 'System Scan', 'Optimize RAM'].map((action) => (
+                  <button key={action} className="px-6 py-3 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:bg-blue-500/10 hover:border-blue-500/50 transition-all text-white/70 hover:text-white font-medium text-sm flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500/50"></div>
+                    {action}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-2 w-full max-w-2xl">
