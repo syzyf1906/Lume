@@ -34,6 +34,7 @@
   "build": {
     "appId": "com.lume.app",
     "productName": "Lume",
+    "publish": "never",
     "files": [
       "dist/**",
       "package.json"
