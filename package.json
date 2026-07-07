@@ -34,14 +34,7 @@
   "build": {
     "appId": "com.lume.app",
     "win": {
-      "target": "nsis"
-    },
-    "nsis": {
-      "oneClick": true
-    },
-    "directories": {
-      "app": "dist",
-      "output": "dist_installer"
+      "target": "portable"
     }
   }
 }

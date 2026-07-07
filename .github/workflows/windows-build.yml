@@ -1,31 +1,13 @@
-name: Build Windows Installer
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-
+name: Build
+on: [push]
 jobs:
-  build-windows:
+  build:
     runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build (renderer + main)
-        run: npm run build
-
-      - name: Upload installer artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lume-windows-installer
-          path: dist_installer
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with: { name: Lume-Portable, path: dist/*.exe }
