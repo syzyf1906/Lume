@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Cpu, Database, HardDrive } from 'lucide-react'
 
 export default function App() {
   const [view, setView] = useState('Dashboard')
@@ -48,18 +49,23 @@ export default function App() {
           {view === 'Dashboard' ? (
             <div className="grid grid-cols-3 gap-6">
               {[
-                { title: 'CPU Usage', val: stats.cpu, color: 'from-blue-500' },
-                { title: 'Memory', val: stats.ram, color: 'from-purple-500' },
-                { title: 'Disk', val: '89%', color: 'from-cyan-500' }
-              ].map((card) => (
+                { title: 'CPU Usage', val: stats.cpu, color: 'from-blue-500', Icon: Cpu },
+                { title: 'Memory', val: stats.ram, color: 'from-purple-500', Icon: Database },
+                { title: 'Disk', val: '89%', color: 'from-cyan-500', Icon: HardDrive, pulse: true }
+              ].map((card: any) => (
                 <div
                   key={card.title}
                   className="p-6 rounded-2xl bg-[#0f0f0f] border border-white/10 hover:border-white/20 transition-all cursor-pointer group shadow-[0_10px_30px_rgba(0,0,0,0.25)] glow-effect"
                 >
-                  <h3 className="text-white/40 uppercase tracking-widest text-[10px] font-bold">{card.title}</h3>
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-white/40 text-[10px] font-bold tracking-widest uppercase">{card.title}</h3>
+                    <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                      <card.Icon size={16} />
+                    </div>
+                  </div>
                   <p className="text-3xl font-bold mt-2 tracking-tight text-white">{card.val}</p>
                   <div className="h-1 w-full bg-white/10 mt-4 rounded-full overflow-hidden">
-                    <div className={`h-full bg-gradient-to-r ${card.color} to-transparent w-1/2`}></div>
+                    <div className={`h-full bg-gradient-to-r ${card.color} to-transparent ${card.pulse ? 'animate-pulse' : ''} w-1/2`}></div>
                   </div>
                 </div>
               ))}
