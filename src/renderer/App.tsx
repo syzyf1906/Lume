@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Cpu, Database, HardDrive } from 'lucide-react'
-import initAuth from './services/firebase'
+import { initAuth } from './services/firebase'
 
 export default function App() {
   const [view, setView] = useState('Dashboard')
@@ -20,8 +20,8 @@ export default function App() {
 
     fetchStats()
     const id = setInterval(fetchStats, 2000)
-    // Try initializing Firebase auth (safe no-op if env not set)
-    initAuth().then(ok => console.log('Firebase Auth: ' + (ok ? 'Success' : 'Failed')))
+    // Try initializing Firebase auth during app startup
+    initAuth()
     return () => {
       mounted = false
       clearInterval(id)
