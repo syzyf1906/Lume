@@ -2,7 +2,7 @@
   "name": "lume",
   "version": "0.1.0",
   "private": true,
-  "main": "main/main.js",
+  "main": "dist/main/main.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron -r ts-node/register src/main/main.ts\"",
     "build:renderer": "vite build",
@@ -33,6 +33,9 @@
   },
   "build": {
     "appId": "com.lume.app",
+    "files": [
+      "dist/**/*"
+    ],
     "win": {
       "target": "portable"
     }
