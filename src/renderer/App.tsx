@@ -39,7 +39,10 @@ export default function App() {
               onClick={() => setView(item)}
               className={`text-left px-4 py-3 rounded-xl border transition-all duration-300 font-medium ${view === item ? 'bg-blue-500/10 text-white border-blue-500/20' : 'border-transparent text-white/50 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/5'}`}
             >
-              {item}
+              <span className="flex items-center gap-3">
+                <span>{item}</span>
+                {item === 'Dashboard' && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />}
+              </span>
             </button>
           ))}
         </nav>
@@ -55,7 +58,7 @@ export default function App() {
               ].map((card: any) => (
                 <div
                   key={card.title}
-                  className="p-6 rounded-2xl bg-[#0f0f0f] border border-white/10 hover:border-white/20 transition-all cursor-pointer group shadow-[0_10px_30px_rgba(0,0,0,0.25)] glow-effect"
+                  className="p-6 rounded-2xl bg-[#0f0f0f] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer group shadow-[0_10px_30px_rgba(0,0,0,0.25)] glow-effect shadow-inner"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-white/40 text-[10px] font-bold tracking-widest uppercase">{card.title}</h3>
@@ -63,10 +66,22 @@ export default function App() {
                       <card.Icon size={16} />
                     </div>
                   </div>
-                  <p className="text-3xl font-bold mt-2 tracking-tight text-white">{card.val}</p>
-                  <div className="h-1 w-full bg-white/10 mt-4 rounded-full overflow-hidden">
-                    <div className={`h-full bg-gradient-to-r ${card.color} to-transparent ${card.pulse ? 'animate-pulse' : ''} w-1/2`}></div>
-                  </div>
+                  {/* Demo filler for CPU and Memory */}
+                  {card.title === 'CPU Usage' || card.title === 'Memory' ? (
+                    <div className="flex items-end gap-2 mt-2">
+                      <span className="text-3xl font-bold text-white">{card.val}</span>
+                      <span className="text-blue-500 text-xs font-medium mb-1">OPTIMAL</span>
+                    </div>
+                  ) : (
+                    <p className="text-3xl font-bold mt-2 tracking-tight text-white">{card.val}</p>
+                  )}
+
+                  {/* Progress for non-demo (Disk) */}
+                  {!(card.title === 'CPU Usage' || card.title === 'Memory') && (
+                    <div className="h-1 w-full bg-white/10 mt-4 rounded-full overflow-hidden">
+                      <div className={`h-full bg-gradient-to-r ${card.color} to-transparent ${card.pulse ? 'animate-pulse' : ''} w-1/2`}></div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
