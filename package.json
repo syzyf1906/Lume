@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron -r ts-node/register src/main/main.ts\"",
     "build:renderer": "vite build",
-    "build:main": "tsc -p tsconfig.json",
+    "build:main": "tsc -p tsconfig.json && node ./scripts/copy-preload.js",
     "build": "npm run build:renderer && npm run build:main && electron-builder --win --x64",
     "start": "electron .",
     "type-check": "tsc --noEmit"
